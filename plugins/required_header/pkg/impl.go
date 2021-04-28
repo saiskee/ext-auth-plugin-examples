@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 
 	envoy_config_core_v3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	envoy_service_auth_v3 "github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"
@@ -22,8 +24,6 @@ var (
 type RequiredHeaderPlugin struct{}
 
 type Config struct {
-	RequiredHeader string
-	AllowedValues  []string
 }
 
 func (p *RequiredHeaderPlugin) NewConfigInstance(ctx context.Context) (interface{}, error) {
@@ -31,25 +31,15 @@ func (p *RequiredHeaderPlugin) NewConfigInstance(ctx context.Context) (interface
 }
 
 func (p *RequiredHeaderPlugin) GetAuthService(ctx context.Context, configInstance interface{}) (api.AuthService, error) {
-	config, ok := configInstance.(*Config)
+	_, ok := configInstance.(*Config)
 	if !ok {
 		return nil, UnexpectedConfigError(configInstance)
 	}
 
-	logger(ctx).Infow("Parsed RequiredHeaderAuthService config",
-		zap.Any("requiredHeader", config.RequiredHeader),
-		zap.Any("allowedHeaderValues", config.AllowedValues),
-	)
-
-	valueMap := map[string]bool{}
-	for _, v := range config.AllowedValues {
-		valueMap[v] = true
-	}
-
-	return &RequiredHeaderAuthService{
-		RequiredHeader: config.RequiredHeader,
-		AllowedValues:  valueMap,
-	}, nil
+	_ = session.Must(session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1"),
+	}))
+	return &RequiredHeaderAuthService{}, nil
 }
 
 type RequiredHeaderAuthService struct {

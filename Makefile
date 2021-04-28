@@ -8,13 +8,13 @@ format:
 #----------------------------------------------------------------------------------
 
 # Set this variable to the version of GlooE you want to target
-GLOOE_VERSION ?= 1.7.2
+GLOOE_VERSION ?= 1.6.26
 
 # Set this variable to the name of your build plugin
 PLUGIN_BUILD_NAME ?= RequiredHeader.so
 
 # Set this variable to the image name and tag of your plugin
-PLUGIN_IMAGE ?= gloo-ext-auth-plugins:$(GLOOE_VERSION)
+PLUGIN_IMAGE ?= test-aws-plugin:$(GLOOE_VERSION)
 
 # Set this variable to the name of your plugin
 PLUGIN_NAME ?= required_header
